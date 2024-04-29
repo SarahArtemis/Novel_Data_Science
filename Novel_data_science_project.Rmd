@@ -1,0 +1,125 @@
+---
+title: "Novel_data_science_project"
+author: "Sarah, Max, and Jennie"
+date: "2024-04-22"
+output: html_document
+---
+
+```{r Formatting}
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+      x)
+  } else x
+}
+
+```
+
+```{r out.width="400px", fig.cap="A female convict cichlid."}
+knitr::include_graphics("https://i.ibb.co/DL0NPSJ/2024-04-26-cichlid.png")
+```
+
+# `r colorize("Introduction", "#0073E6")`
+
+An individual's internal state, or "social state", can influence how they respond to different social cues and contexts. Examples of social states include reproductive state, parental state, status in a heirarchy, and forming a pairbond. These social states can make an individual more aggressive, submissive, or affiliative in different contexts. Convict cichlids (A. nigrofasciata) form pairbonds and exhibit biparental care (2 different social states). We can use these fish to study how social state influences behavioral response (agressive vs. affiliative) and if this influence differs between males and females.
+
+## `r colorize("Experimental setup", "#0073E6")`
+
+Convict cichlid pairs were apportioned into four different treatments:
+
+#### `r colorize("Rival (pairbond-aggressive):", "#5BA300")`
+
+A second "rival" conspecific male is introduced to the pairbonded male and female. This elicits an aggressive response towards the rival.
+
+#### `r colorize("Bond (pairbond-affiliative):", "#89CE00")`
+
+A pairbonded male and female are separated for 30min. When they are re-introduced to eachother they exhibit affiliative behaviors.
+
+#### Predator (parental-agressive):
+
+A wolf cichlid (convict egg predator) is introduced to the nest of a male and female with fry. This elicits an aggressive response as the convict cichlids defend their nest.
+
+#### Retrieval (parental-affiliative):
+
+The fry are removed from the nest and placed in a different part of the tank. The male and female then retrieve their young and bring them back to the nest.
+
+Male and females behaviors were scored for 10 minutes during each treatment. A total of 44 pairs were tested.
+
+### Data Analysis
+
+A principle component analysis was run on the raw behavior data first. The eigenvalues for PC1 (Response) and PC2 (Social State) were extracted for each individual. This is the dataset included in the Rpackage and that we will use for this vignette.
+
+For the descriptive statistic, we will calculate the means and standard deviations for each treatment group by sex. We will run an ANOVA to look for significant differences and then use a posthoc Tukey test to determine where the significant differences are.
+
+### Load packages and data
+
+```{r, warning=FALSE}
+#Load in libraries
+library(skimr)
+library(tidyverse)
+library(broom)
+
+#Load in data
+f<-"https://raw.githubusercontent.com/SarahArtemis/Novel_Data_Science/main/ConvictCichlid_PC1%262_eigenvalues.csv"
+d<-read.csv(f, header = TRUE)
+skim(d)
+```
+
+### Descriptive Statistics
+
+```{R}
+avg<-d%>%
+  group_by(Treatment, Sex)%>%
+  summarise(meanPC1=mean(PC_1_value), sdPC1=sd(PC_1_value), meanPC2=mean(PC_2_value), sdPC2=sd(PC_2_value))
+
+head(avg)
+
+```
+
+### Visualize data
+
+```{R}
+#PC1 - Affiliative vs Aggressive (Response)
+a<-ggplot(d, aes(x=Treatment, y=(PC_1_value), col=Sex))+
+  geom_boxplot()+ geom_jitter(width = 0.10)+
+  ggtitle("PC1: Response") +
+  xlab("Treatment") + ylab("Eigenvalue")
+a
+
+#PC2 - Bond vs Parental (State)
+b<-ggplot(d, aes(x=Treatment, y=PC_2_value, col=Sex))+
+  geom_boxplot()+ geom_jitter(width = 0.2)+
+  ggtitle("PC2: Social State") +
+  xlab("Treatment") + ylab("Eigenvalue")
+b
+
+```
+
+### Test for significant differences with ANOVA
+
+```{R}
+#PC1 - Affiliative vs Aggressive (Response)
+m1 <- aov(data = d, PC_1_value ~ Treatment + State + Response + Sex + Treatment:Sex + State:Sex + Response:Sex)
+tidy(m1)
+
+#PC2 - Bond vs Parental (State)
+m2 <- aov(data = d, PC_2_value ~ Treatment + State + Response + Sex + Treatment:Sex + State:Sex + Response:Sex)
+tidy(m2)
+
+```
+
+### Post-hoc Tukey test
+
+```{R}
+#PC1 - Affiliative vs Aggressive (Response)
+(posthoc1 <- TukeyHSD(m1, which = "Treatment", ordered = TRUE, conf.level = 0.95))
+
+#PC2 - Bond vs Parental (State)
+(posthoc2 <- TukeyHSD(m2, which = "Treatment:Sex", ordered = TRUE, conf.level = 0.95))
+```
+
+### Conclusion
+
+Female behavioral response appears to be influenced by social state, while male behavioral response is not.
