@@ -14,7 +14,6 @@ colorize <- function(x, color) {
       x)
   } else x
 }
-
 ```
 
 ```{r out.width="400px", fig.cap="A female convict cichlid."}
@@ -23,27 +22,19 @@ knitr::include_graphics("https://i.ibb.co/DL0NPSJ/2024-04-26-cichlid.png")
 
 # `r colorize("Introduction", "#0073E6")`
 
-An individual's internal state, or "social state", can influence how they respond to different social cues and contexts. Examples of social states include reproductive state, parental state, status in a heirarchy, and forming a pairbond. These social states can make an individual more aggressive, submissive, or affiliative in different contexts. Convict cichlids (A. nigrofasciata) form pairbonds and exhibit biparental care (2 different social states). We can use these fish to study how social state influences behavioral response (agressive vs. affiliative) and if this influence differs between males and females.
+An individual's internal state, or "social state", can influence how they respond to different social cues and contexts. Examples of social states include reproductive state, parental state, status in a hierarchy, and forming a pairbond. These social states can make an individual more aggressive, submissive, or affiliative in different contexts. Convict cichlids (*A. nigrofasciata*) form pairbonds and exhibit bi-parental care (2 different social states). We can use these fish to study how social state influences behavioral response (aggressive vs. affiliative) and if this influence differs between males and females.
 
 ## `r colorize("Experimental setup", "#0073E6")`
 
 Convict cichlid pairs were apportioned into four different treatments:
 
-#### `r colorize("Rival (pairbond-aggressive):", "#5BA300")`
+**`r colorize("Rival (pairbond-aggressive):", "#5BA300")`** A second "rival" conspecific male is introduced to the pairbonded male and female. This elicits an aggressive response towards the rival.
 
-A second "rival" conspecific male is introduced to the pairbonded male and female. This elicits an aggressive response towards the rival.
+**`r colorize("Bond (pairbond-affiliative):", "#89CE00")`** A pairbonded male and female are separated for 30min. When they are re-introduced to each other they exhibit affiliative behaviors.
 
-#### `r colorize("Bond (pairbond-affiliative):", "#89CE00")`
+**`r colorize("Predator (parental-aggressive):", "#B51963")`** A wolf cichlid (convict egg predator) is introduced to the nest of a male and female with fry. This elicits an aggressive response as the convict cichlids defend their nest.
 
-A pairbonded male and female are separated for 30min. When they are re-introduced to eachother they exhibit affiliative behaviors.
-
-#### Predator (parental-agressive):
-
-A wolf cichlid (convict egg predator) is introduced to the nest of a male and female with fry. This elicits an aggressive response as the convict cichlids defend their nest.
-
-#### Retrieval (parental-affiliative):
-
-The fry are removed from the nest and placed in a different part of the tank. The male and female then retrieve their young and bring them back to the nest.
+**`r colorize("Retrieval (parental-affiliative):", "#E6308A")`** The fry are removed from the nest and placed in a different part of the tank. The male and female then retrieve their young and bring them back to the nest.
 
 Male and females behaviors were scored for 10 minutes during each treatment. A total of 44 pairs were tested.
 
