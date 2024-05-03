@@ -235,6 +235,42 @@ Using both the Tukey and MWU tests, we can get a more detailed understanding of 
 ```
 In the Tukey test for treatment:sex of the ANOVA for PC2, we found several significant differences specific to both males and females. In females, predator treatments differed from F-Rival and F-bond treatments across PC2. In males, predator treatment differed from F-bond treatments and F rival treatments. Additionally, males differed in retrieve treatments as opposed to F rival treatments. Male retrieve treatments also differed from F-Retrieve treatments and M-Predator treatments differed from F retrieve treatments. All other treatments did not appear to have any discernable relationship by sex or interaction with sex along PC2. 
 
+While we understand which variables explain variation across PC1 and PC2, how would we know which variables and interactions best describe the response variable? To answer this question, we must use Model Selection. 
+
+## `r colorize("Model Selection using AICc", "#0073E6")`
+
+Model selection is a method by which we compare different explanatory variables in their ability to predict the response variable, and attempt to find a model that best explains the response variable, without adding unnecessary explanatory variables that may not be as relevant. To select for the ideal model we will use a stepwise selection function we have created. This function uses the AICc to determine the relative fit of the model.
+
+First we need to build the ANOVA models for PC1 and PC2 again
+```{r}
+# PC2 model
+m2_l <- aov(data = d, log(PC_2_value) ~ Treatment + State + Response + Sex + Treatment:Sex + State:Sex + Response:Sex)
+
+m0<- aov(data = d, log(PC_2_value) ~ 1)
+m1<- aov(data = d, log(PC_2_value) ~ Treatment)
+m2<- aov(data = d, log(PC_2_value) ~ Treatment + State)
+m3<- aov(data = d, log(PC_2_value) ~ Treatment + State + Response)
+m4<- aov(data = d, log(PC_2_value) ~ Treatment + State + Response + Sex)
+m5<- aov(data = d, log(PC_2_value) ~ Treatment + State + Response + Sex + Treatment:Sex)
+m6<- aov(data = d, log(PC_2_value) ~ Treatment + State + Response + Sex + Treatment:Sex + State:Sex)
+#PC1 kruskal wallis models
+kw1_t <- kruskal.test(data = d, PC_1_value ~ Treatment)
+kw1_s <- kruskal.test(data = d, PC_1_value ~ Sex)
+```
+
+Then we use our stepwise AIC function to get AIC values for each model
+```{r}
+(s<- stepAIC(m2_l, scope = . ~ ., direction = "both"))
+summary(s)
+```
+In this function for the AIC, we find that the model including only treatment and sex appears to be the optimal model. Next, we must correct said models for small sample sizes. 
+
+AICc 
+```{r}
+aictab(list(m0,m1,m2,m3,m4,m5,m6,m2_l), c("m0", "m1", "m2", "m3", "m4", "m5", "m6", "m2_l"))
+```
+From this AICc list, we find that anova model 4: Treatment + State + Response + Sex, was relatively the most optimal model.
+
 
 ## `r colorize("Conclusion", "#0073E6")`
 
